@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VortexFire EOS — Entrepreneurial Operating System</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f5f5;
+    --bg-white: #ffffff;
+    --orange: #c75418;
+    --orange-light: #e8641c;
+    --orange-tile: #d4611e;
+    --orange-bg: #fef4ee;
+    --orange-bg2: #fdeee4;
+    --text-dark: #1a1a1a;
+    --text-body: #333333;
+    --text-secondary: #666666;
+    --text-muted: #999999;
+    --border: #e5e5e5;
+    --border-light: #eeeeee;
+    --green: #1a8a4a;
+    --green-bg: #e8f5ee;
+    --yellow: #b8860b;
+    --yellow-bg: #fef9e7;
+    --red: #c0392b;
+    --red-bg: #fde8e8;
+    --blue: #2e6da4;
+    --blue-bg: #e8f0f8;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Outfit', 'Segoe UI', sans-serif;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-hover: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--text-body); min-height:100vh; }
+
+  /* ═══ HEADER BAR — matches SharePoint site header ═══ */
+  .site-header {
+    background: var(--orange); color: #fff; padding: 0 32px;
+    display: flex; align-items: center; height: 48px; gap: 24px;
+  }
+  .site-header .site-name { font-weight: 700; font-size: 15px; letter-spacing: 0.02em; }
+  .site-header nav { display: flex; gap: 0; }
+  .site-header nav a {
+    color: rgba(255,255,255,0.85); text-decoration: none; font-size: 13px;
+    font-weight: 500; padding: 14px 16px; transition: all 0.15s ease;
+    border-bottom: 2px solid transparent;
+  }
+  .site-header nav a:hover { color: #fff; background: rgba(255,255,255,0.08); }
+  .site-header nav a.active { color: #fff; border-bottom-color: #fff; }
+
+  /* ═══ PAGE HEADER ═══ */
+  .page-hero {
+    background: var(--bg-white); padding: 40px 48px 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-hero h1 {
+    font-size: 28px; font-weight: 800; color: var(--text-dark);
+    margin-bottom: 8px; letter-spacing: -0.01em;
+  }
+  .page-hero h1 span { color: var(--orange); }
+  .page-hero p { font-size: 15px; color: var(--text-secondary); line-height: 1.6; max-width: 680px; }
+
+  /* ═══ EOS NAV TILES — matches the orange icon grid ═══ */
+  .eos-tiles {
+    background: var(--bg-white); padding: 24px 48px 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tiles-grid {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px;
+    max-width: 900px; margin: 0 auto;
+  }
+  .tile {
+    background: var(--orange-tile); border-radius: var(--radius); padding: 20px 12px 16px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    cursor: pointer; transition: all 0.2s ease; text-align: center;
+    border: 2px solid transparent;
+  }
+  .tile:hover { background: var(--orange-light); transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .tile.active { border-color: var(--text-dark); box-shadow: 0 0 0 2px var(--text-dark); }
+  .tile-icon { font-size: 28px; color: #fff; line-height: 1; }
+  .tile-icon svg { width: 32px; height: 32px; stroke: #fff; fill: none; stroke-width: 1.8; }
+  .tile-label { font-size: 11px; font-weight: 600; color: #fff; letter-spacing: 0.02em; line-height: 1.3; }
+
+  /* ═══ CONTENT AREA ═══ */
+  .content-area { padding: 32px 48px; max-width: 1200px; margin: 0 auto; }
+  .tab-panel { display: none; animation: fadeIn 0.3s ease; }
+  .tab-panel.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ═══ SECTION HEADERS ═══ */
+  .section-title {
+    font-size: 22px; font-weight: 800; color: var(--text-dark);
+    margin-bottom: 6px; letter-spacing: -0.01em;
+  }
+  .section-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; }
+  .section-divider { border: none; border-top: 2px solid var(--orange-bg2); margin: 32px 0; }
+
+  /* ═══ CARDS ═══ */
+  .card {
+    background: var(--bg-white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px;
+    box-shadow: var(--shadow); transition: box-shadow 0.2s ease;
+  }
+  .card:hover { box-shadow: var(--shadow-hover); }
+  .card-header {
+    font-size: 13px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--orange); margin-bottom: 16px;
+    padding-bottom: 10px; border-bottom: 2px solid var(--orange-bg2);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-header .card-icon {
+    width: 28px; height: 28px; background: var(--orange-tile); border-radius: 6px;
+    display: grid; place-items: center; color: #fff; font-size: 14px; flex-shrink: 0;
+  }
+  .card-header.green { color: var(--green); border-bottom-color: var(--green-bg); }
+  .card-header.green .card-icon { background: var(--green); }
+  .card-header.blue { color: var(--blue); border-bottom-color: var(--blue-bg); }
+  .card-header.blue .card-icon { background: var(--blue); }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 900px) { .grid-2, .grid-3, .tiles-grid { grid-template-columns: 1fr; } }
+
+  /* ═══ DATA ITEMS ═══ */
+  .label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin-bottom: 4px; }
+  .value { font-size: 14px; color: var(--text-body); line-height: 1.65; }
+  .value-big { font-family: var(--mono); font-size: 28px; font-weight: 600; color: var(--text-dark); }
+  .value-big.green { color: var(--green); }
+  .text-orange { color: var(--orange); }
+  .text-italic { font-style: italic; }
+
+  .cv-item { padding: 10px 14px; background: var(--orange-bg); border-radius: 6px; margin-bottom: 8px; border-left: 3px solid var(--orange-tile); }
+  .cv-title { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 2px; }
+  .cv-desc { font-size: 12px; color: var(--text-secondary); }
+
+  .list-item {
+    font-size: 13px; color: var(--text-body); line-height: 1.6;
+    padding: 7px 0; border-bottom: 1px solid var(--border-light);
+  }
+  .list-item:last-child { border-bottom: none; }
+
+  .unique-item { display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start; }
+  .unique-num {
+    width: 24px; height: 24px; background: var(--orange-tile); color: #fff;
+    border-radius: 50%; display: grid; place-items: center;
+    font-size: 12px; font-weight: 700; flex-shrink: 0;
+  }
+  .unique-text { font-size: 13px; color: var(--text-body); line-height: 1.5; padding-top: 2px; }
+
+  .stats-row { display: flex; gap: 32px; margin-bottom: 16px; }
+  .stat-block .label { margin-bottom: 2px; }
+
+  /* ═══ ACCOUNTABILITY ═══ */
+  .person-card { text-align: center; padding: 28px 20px; }
+  .person-avatar {
+    width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 12px;
+    display: grid; place-items: center; font-size: 20px; font-weight: 700; color: #fff;
+  }
+  .person-avatar.orange { background: var(--orange-tile); }
+  .person-avatar.blue { background: var(--blue); }
+  .person-name { font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 2px; }
+  .person-title { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
+  .resp-item { font-size: 12px; color: var(--text-secondary); padding: 4px 0; text-align: left; }
+
+  .dept-card {
+    background: var(--bg-white); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px; box-shadow: var(--shadow); border-top: 3px solid var(--orange-tile);
+    transition: all 0.2s ease;
+  }
+  .dept-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+  .dept-name { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--orange); margin-bottom: 10px; }
+  .dept-head { font-size: 15px; font-weight: 700; color: var(--text-dark); margin-bottom: 2px; }
+  .dept-title { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
+  .dept-seat { font-size: 12px; color: var(--text-secondary); padding: 3px 0; }
+
+  /* ═══ ROCKS ═══ */
+  .rock-row {
+    background: var(--bg-white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 20px;
+    display: grid; grid-template-columns: 110px 1fr 90px 140px;
+    align-items: center; gap: 14px; margin-bottom: 10px;
+    box-shadow: var(--shadow); transition: all 0.2s ease;
+  }
+  .rock-row:hover { box-shadow: var(--shadow-hover); }
+  .rock-owner { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+  .rock-desc { font-size: 13px; color: var(--text-dark); font-weight: 500; }
+  .progress-track { width: 100%; height: 8px; background: var(--border-light); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; transition: width 0.8s ease; }
+  .progress-fill.green { background: var(--green); }
+  .progress-fill.yellow { background: var(--yellow); }
+  .progress-fill.blue { background: var(--blue); }
+  .rock-pct { font-family: var(--mono); font-size: 12px; color: var(--text-muted); min-width: 32px; text-align: right; }
+
+  /* ═══ BADGES ═══ */
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 4px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap;
+  }
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-yellow { background: var(--yellow-bg); color: var(--yellow); }
+  .badge-blue { background: var(--blue-bg); color: var(--blue); }
+  .badge-red { background: var(--red-bg); color: var(--red); }
+
+  /* ═══ SCORECARD TABLE ═══ */
+  .scorecard-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); background: var(--bg-white); }
+  .sc-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .sc-table th {
+    text-align: left; padding: 11px 10px; font-weight: 700;
+    font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-muted); border-bottom: 2px solid var(--border);
+    background: #fafafa;
+  }
+  .sc-table th.sticky { position: sticky; left:0; z-index: 2; background: #fafafa; min-width: 145px; }
+  .sc-table th.goal { color: var(--orange); text-align: center; }
+  .sc-table th.week { text-align: center; min-width: 50px; font-weight: 600; }
+  .sc-table td { padding: 9px 10px; border-bottom: 1px solid var(--border-light); }
+  .sc-table td.sticky { position: sticky; left:0; z-index: 1; font-weight: 600; color: var(--text-dark); }
+  .sc-table tr:nth-child(even) td.sticky { background: #fafafa; }
+  .sc-table tr:nth-child(odd) td.sticky { background: #fff; }
+  .sc-table tr:nth-child(even) { background: #fafafa; }
+  .sc-table td.owner { font-family: var(--mono); font-size: 11px; color: var(--text-muted); }
+  .sc-table td.goal-cell { text-align: center; font-family: var(--mono); font-weight: 700; color: var(--orange); }
+  .sc-table td.val { text-align: center; font-family: var(--mono); font-size: 11px; font-weight: 500; }
+  .sc-table td.hit { color: var(--green); background: rgba(26,138,74,0.04); }
+  .sc-table td.miss { color: var(--red); background: rgba(192,57,43,0.04); }
+
+  /* ═══ ISSUES ═══ */
+  .filter-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+  .filter-group { display: flex; gap: 6px; }
+  .filter-btn {
+    background: var(--bg-white); color: var(--text-muted);
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 14px; font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: var(--sans); text-transform: capitalize;
+    transition: all 0.15s ease;
+  }
+  .filter-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .filter-btn.active { background: var(--orange-bg); color: var(--orange); border-color: var(--orange); }
+
+  .issue-row {
+    background: var(--bg-white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 20px;
+    display: flex; align-items: center; gap: 14px; margin-bottom: 10px;
+    box-shadow: var(--shadow); transition: all 0.2s ease;
+  }
+  .issue-row:hover { box-shadow: var(--shadow-hover); }
+  .priority-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .priority-dot.high { background: var(--red); }
+  .priority-dot.medium { background: var(--yellow); }
+  .priority-dot.low { background: var(--text-muted); }
+  .issue-text { font-size: 14px; color: var(--text-dark); font-weight: 500; margin-bottom: 3px; }
+  .issue-meta { font-size: 11px; color: var(--text-muted); }
+  .issue-meta .owner { font-family: var(--mono); font-weight: 500; }
+  .issue-meta .sep { margin: 0 8px; opacity: 0.3; }
+  .issue-meta .type-ids { color: var(--yellow); font-weight: 700; }
+  .issue-meta .type-solve { color: var(--green); font-weight: 700; }
+
+  .resolve-btn {
+    background: var(--green-bg); color: var(--green);
+    border: 1px solid rgba(26,138,74,0.25); border-radius: 6px;
+    padding: 6px 14px; font-size: 11px; font-weight: 700;
+    font-family: var(--sans); letter-spacing: 0.04em;
+    text-transform: uppercase; cursor: pointer;
+    transition: all 0.15s ease; white-space: nowrap;
+  }
+  .resolve-btn:hover { background: var(--green); color: #fff; }
+
+  /* ═══ MEETINGS ═══ */
+  .agenda-item {
+    display: grid; grid-template-columns: 40px 1fr 64px;
+    align-items: center; gap: 12px; border-radius: var(--radius);
+    padding: 12px 16px; margin-bottom: 6px;
+    background: #fafafa; border: 1px solid var(--border-light);
+    transition: all 0.15s ease;
+  }
+  .agenda-item:hover { background: var(--orange-bg); }
+  .agenda-item.highlight { background: var(--orange-bg); border-color: var(--orange); border-left: 3px solid var(--orange); }
+  .agenda-icon {
+    width: 32px; height: 32px; background: var(--orange-tile); border-radius: 6px;
+    display: grid; place-items: center; color: #fff; font-size: 14px;
+  }
+  .agenda-item.highlight .agenda-icon { background: var(--orange); }
+  .agenda-text { font-size: 14px; color: var(--text-dark); font-weight: 500; }
+  .agenda-item.highlight .agenda-text { font-weight: 700; }
+  .agenda-time { font-family: var(--mono); font-size: 12px; color: var(--text-muted); text-align: right; }
+  .agenda-item.highlight .agenda-time { color: var(--orange); font-weight: 700; }
+
+  /* ═══ FOOTER ═══ */
+  .footer {
+    border-top: 1px solid var(--border); background: var(--bg-white);
+    padding: 16px 48px; display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--text-muted);
+  }
+
+  /* ═══ RESPONSIVE ═══ */
+  @media (max-width: 768px) {
+    .page-hero, .eos-tiles, .content-area, .footer { padding-left: 16px; padding-right: 16px; }
+    .tiles-grid { grid-template-columns: repeat(3, 1fr); }
+    .rock-row { grid-template-columns: 1fr; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ SHAREPOINT SITE HEADER ═══ -->
+<div class="site-header">
+  <div class="site-name">Company Training & Resources</div>
+  <nav>
+    <a href="#">Getting Started</a>
+    <a href="#">FAQ & Support</a>
+    <a href="#">QAQC</a>
+    <a href="#" class="active">EOS</a>
+  </nav>
+</div>
+
+<!-- ═══ PAGE HERO ═══ -->
+<div class="page-hero">
+  <h1>VORTEX <span>FIRE</span> — EOS</h1>
+  <p>Your Entrepreneurial Operating System dashboard. Track vision, accountability, rocks, scorecard, issues, and meeting pulse — all in one place. Updated regularly, so make sure to bookmark this page!</p>
+</div>
+
+<!-- ═══ EOS NAVIGATION TILES ═══ -->
+<div class="eos-tiles">
+  <div class="tiles-grid" id="tile-nav">
+    <div class="tile active" data-tab="vto">
+      <div class="tile-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="#fff" stroke="none"/></svg></div>
+      <div class="tile-label">Vision /<br>Traction</div>
+    </div>
+    <div class="tile" data-tab="accountability">
+      <div class="tile-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <div class="tile-label">Accountability<br>Chart</div>
+    </div>
+    <div class="tile" data-tab="rocks">
+      <div class="tile-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/><line x1="12" y1="22" x2="12" y2="15.5"/><polyline points="22 8.5 12 15.5 2 8.5"/></svg></div>
+      <div class="tile-label">Quarterly<br>Rocks</div>
+    </div>
+    <div class="tile" data-tab="scorecard">
+      <div class="tile-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg></div>
+      <div class="tile-label">Weekly<br>Scorecard</div>
+    </div>
+    <div class="tile" data-tab="issues">
+      <div class="tile-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+      <div class="tile-label">Issues<br>List</div>
+    </div>
+    <div class="tile" data-tab="meetings">
+      <div class="tile-icon"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div>
+      <div class="tile-label">Meeting<br>Pulse</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CONTENT ═══ -->
+<div class="content-area">
+
+  <!-- ─── VTO ─── -->
+  <div class="tab-panel active" id="tab-vto">
+    <div class="section-title">Vision / Traction Organizer</div>
+    <div class="section-sub">The foundation of your EOS — where you're going and how you plan to get there.</div>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="card">
+        <div class="card-header"><div class="card-icon">♦</div> Core Values</div>
+        <div class="cv-item"><div class="cv-title">Safety First, Always</div><div class="cv-desc">Every decision preserves life and property</div></div>
+        <div class="cv-item"><div class="cv-title">Engineering Excellence</div><div class="cv-desc">Bespoke, cutting-edge fire solutions</div></div>
+        <div class="cv-item"><div class="cv-title">Global Expertise, Local Trust</div><div class="cv-desc">Deep local knowledge across 3 continents</div></div>
+        <div class="cv-item"><div class="cv-title">Collaborative Innovation</div><div class="cv-desc">Partner closely with clients and design teams</div></div>
+        <div class="cv-item"><div class="cv-title">Sustainability Forward</div><div class="cv-desc">Streamline construction, protect the environment</div></div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-header"><div class="card-icon">◎</div> Core Focus</div>
+          <div class="label">Purpose / Cause / Passion</div>
+          <div class="value" style="margin-bottom:14px">Protect lives, preserve property, and promote sustainability through world-class fire safety engineering.</div>
+          <div class="label">Our Niche</div>
+          <div class="value">Independent fire safety engineering & building code consultancy for complex, high-profile developments worldwide.</div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-icon">★</div> 10-Year Target™</div>
+          <div class="value text-italic" style="font-size:15px;line-height:1.7">Become the most trusted global independent fire safety consultancy — the first name architects and developers call for complex code and engineering challenges across 10+ countries.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-icon">▲</div> Marketing Strategy</div>
+      <div class="grid-2">
+        <div>
+          <div class="label">Target Market</div>
+          <div class="value" style="margin-bottom:18px;font-size:13px">Developers, architects, and property owners delivering complex commercial, residential, and mixed-use projects in Canada, UAE, and Australia</div>
+          <div class="label">Guarantee</div>
+          <div class="value text-orange" style="font-size:13px;font-weight:600">If your project doesn't pass code review on first submission, we re-engineer at no additional cost.</div>
+        </div>
+        <div>
+          <div class="label">Three Uniques™</div>
+          <div class="unique-item"><span class="unique-num">1</span><span class="unique-text">Truly independent consultancy — no product affiliations, pure advisory</span></div>
+          <div class="unique-item"><span class="unique-num">2</span><span class="unique-text">Multi-jurisdictional expertise (Canadian NBC, UAE Civil Defence, Australian NCC)</span></div>
+          <div class="unique-item"><span class="unique-num">3</span><span class="unique-text">Advanced CFD fire & smoke modelling with in-house specialists</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header green"><div class="card-icon" style="background:var(--green)">◈</div> 3-Year Picture™</div>
+        <div class="stats-row">
+          <div class="stat-block"><div class="label">Revenue</div><div class="value-big">$12M</div></div>
+          <div class="stat-block"><div class="label">Profit Margin</div><div class="value-big green">22%</div></div>
+        </div>
+        <div class="list-item">✦ 6 offices across 4 countries</div>
+        <div class="list-item">✦ 50+ engineers and consultants</div>
+        <div class="list-item">✦ 500+ projects delivered</div>
+        <div class="list-item">✦ Industry-leading NPS of 75+</div>
+      </div>
+      <div class="card">
+        <div class="card-header blue"><div class="card-icon" style="background:var(--blue)">◉</div> 1-Year Plan</div>
+        <div class="stats-row">
+          <div class="stat-block"><div class="label">Revenue</div><div class="value-big">$6.5M</div></div>
+          <div class="stat-block"><div class="label">Profit Margin</div><div class="value-big green">18%</div></div>
+        </div>
+        <div class="list-item">1. Open second UAE office in Abu Dhabi — fully staffed by Q3</div>
+        <div class="list-item">2. Launch AI-powered code compliance tools for client self-service</div>
+        <div class="list-item">3. Achieve 40% revenue from performance-based design projects</div>
+        <div class="list-item">4. Hire 8 new fire engineers across all regions</div>
+        <div class="list-item">5. Win 3 landmark supertall/megatall projects</div>
+        <div class="list-item">6. Establish mass timber fire engineering as a named service line</div>
+        <div class="list-item">7. Reduce average project turnaround by 15%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── ACCOUNTABILITY ─── -->
+  <div class="tab-panel" id="tab-accountability">
+    <div class="section-title">Accountability Chart</div>
+    <div class="section-sub">Right people, right seats — who owns what across the organization.</div>
+    <div class="grid-2" style="margin-bottom:24px">
+      <div class="card person-card">
+        <div class="person-avatar orange">JK</div>
+        <div class="person-name">Jack Keays</div>
+        <div class="person-title">Founder & Principal</div>
+        <div class="card-header" style="justify-content:center"><div class="card-icon">V</div> Visionary</div>
+        <div class="resp-item">→ Strategic vision & growth</div>
+        <div class="resp-item">→ Industry thought leadership</div>
+        <div class="resp-item">→ Key client relationships</div>
+        <div class="resp-item">→ Innovation & R&D direction</div>
+      </div>
+      <div class="card person-card">
+        <div class="person-avatar blue">?</div>
+        <div class="person-name">TBD / COO</div>
+        <div class="person-title">Integrator / Operations Lead</div>
+        <div class="card-header blue" style="justify-content:center"><div class="card-icon" style="background:var(--blue)">I</div> Integrator</div>
+        <div class="resp-item">→ Execute vision across offices</div>
+        <div class="resp-item">→ P&L management</div>
+        <div class="resp-item">→ Team alignment & accountability</div>
+        <div class="resp-item">→ Process standardization</div>
+      </div>
+    </div>
+    <div class="section-title" style="font-size:16px">Department Heads</div>
+    <div class="section-sub">Functional leaders across regions and disciplines.</div>
+    <div class="grid-3" id="dept-grid"></div>
+  </div>
+
+  <!-- ─── ROCKS ─── -->
+  <div class="tab-panel" id="tab-rocks">
+    <div class="section-title">Quarterly Rocks</div>
+    <div class="section-sub">Q2 2026 — The most important things for the next 90 days.</div>
+    <div style="display:flex;justify-content:flex-end;gap:14px;margin-bottom:18px" id="rock-summary"></div>
+    <div id="rocks-list"></div>
+  </div>
+
+  <!-- ─── SCORECARD ─── -->
+  <div class="tab-panel" id="tab-scorecard">
+    <div class="section-title">Weekly Scorecard</div>
+    <div class="section-sub">13-week trailing data — green means on track, red means below goal.</div>
+    <div class="scorecard-wrap" id="scorecard-wrap"></div>
+  </div>
+
+  <!-- ─── ISSUES ─── -->
+  <div class="tab-panel" id="tab-issues">
+    <div class="section-title">Issues List</div>
+    <div class="section-sub">Identify, Discuss, Solve — tackle the biggest obstacles first.</div>
+    <div class="filter-bar">
+      <div class="filter-group" id="issue-filters"></div>
+      <div style="font-size:12px;color:var(--text-muted)" id="issue-count"></div>
+    </div>
+    <div id="issues-list"></div>
+  </div>
+
+  <!-- ─── MEETINGS ─── -->
+  <div class="tab-panel" id="tab-meetings">
+    <div class="section-title">Meeting Pulse</div>
+    <div class="section-sub">The rhythm that keeps your team aligned and accountable.</div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon">⚡</div> Level 10 Meeting™ — Weekly</div>
+      <div style="display:flex;gap:24px;margin-bottom:18px;font-size:13px;color:var(--text-muted)">
+        <span>⏱ Tuesdays 9:00 AM EST</span><span>⌛ 90 minutes</span>
+      </div>
+      <div id="l10-agenda"></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header green"><div class="card-icon" style="background:var(--green)">Q</div> Quarterly Planning</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:14px">Every 13 weeks · Full day</div>
+        <div class="list-item">▸ Review prior quarter Rocks</div>
+        <div class="list-item">▸ Set next quarter Rocks</div>
+        <div class="list-item">▸ Revisit 1-Year Plan</div>
+        <div class="list-item">▸ Address major strategic issues</div>
+        <div class="list-item">▸ Team health check</div>
+      </div>
+      <div class="card">
+        <div class="card-header blue"><div class="card-icon" style="background:var(--blue)">A</div> Annual Planning</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:14px">Once per year — January · 2 days</div>
+        <div class="list-item">▸ Review/reset V/TO</div>
+        <div class="list-item">▸ 3-Year Picture update</div>
+        <div class="list-item">▸ Set annual goals & budget</div>
+        <div class="list-item">▸ Organizational checkup</div>
+        <div class="list-item">▸ Team development planning</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <span>Safe. Smart. Sustainable.</span>
+  <span>Powered by EOS® · vortexfire.com</span>
+</div>
+
+<script>
+// ═══ DATA ═══
+const departments = [
+  { name:"Fire Engineering", head:"Amr Hamza", init:"AH", title:"Principal Fire Engineer", seats:["Lead performance-based design","CFD fire & smoke modelling","Structural fire engineering","Quality assurance on deliverables"] },
+  { name:"Code Consulting", head:"Regional Directors", init:"RC", title:"Code Consulting Leads", seats:["Building code interpretation","Authority coordination","Alternative solutions development","Code compliance reviews"] },
+  { name:"Operations & Finance", head:"Danielle LaFleche", init:"DL", title:"Financial Controller", seats:["Financial reporting & forecasting","Project profitability tracking","Accelo platform management","Billing & collections"] },
+  { name:"Regional — UAE", head:"Ahamed Thoufeeq", init:"AT", title:"Regional Director", seats:["UAE Civil Defence approvals","Client development — GCC","Local team management","Dubai & Abu Dhabi operations"] },
+  { name:"Regional — Australia", head:"Benjamin Hughes-Brown", init:"BH", title:"Director — Australia", seats:["Australian NCC compliance","Sydney & Canberra operations","Client development — ANZ","Local regulatory relationships"] },
+];
+
+const rocks = [
+  { owner:"Jack K.", rock:"Close 3 supertall project contracts", status:"on-track", progress:45 },
+  { owner:"Amr H.", rock:"Build CFD modelling centre of excellence", status:"on-track", progress:60 },
+  { owner:"Danielle L.", rock:"Implement project profitability dashboards in Accelo", status:"on-track", progress:75 },
+  { owner:"Ahamed T.", rock:"Staff Abu Dhabi office — 5 FTEs", status:"at-risk", progress:30 },
+  { owner:"Benjamin H-B.", rock:"Win 2 major Australian projects", status:"on-track", progress:50 },
+  { owner:"Jack K.", rock:"Launch mass timber fire engineering service line", status:"complete", progress:100 },
+  { owner:"Danielle L.", rock:"Reduce unbillable admin time by 25%", status:"at-risk", progress:40 },
+  { owner:"Amr H.", rock:"Publish 4 technical papers / conference presentations", status:"on-track", progress:55 },
+];
+
+const scorecard = [
+  { metric:"Revenue (Weekly)", owner:"Danielle L.", goal:"$125K", values:["$118K","$131K","$127K","$142K","$119K","$135K","$128K","$122K","$139K","$145K","$133K","$126K","$138K"] },
+  { metric:"Proposals Sent", owner:"Jack K.", goal:"8", values:["6","9","7","10","8","11","7","5","9","8","10","7","9"] },
+  { metric:"Win Rate (%)", owner:"Jack K.", goal:"55%", values:["52%","61%","48%","58%","55%","63%","50%","45%","57%","62%","54%","49%","60%"] },
+  { metric:"Billable Utilization", owner:"Danielle L.", goal:"75%", values:["71%","78%","73%","80%","76%","74%","69%","72%","77%","81%","75%","70%","79%"] },
+  { metric:"Turnaround (days)", owner:"Amr H.", goal:"≤21", values:["24","22","19","23","20","18","25","21","19","17","22","20","18"] },
+  { metric:"Client NPS", owner:"Jack K.", goal:"70+", values:["68","72","71","75","69","74","73","70","76","78","72","71","77"] },
+  { metric:"New Hires/mo", owner:"Danielle L.", goal:"2", values:["1","2","3","1","2","2","0","1","3","2","1","2","2"] },
+  { metric:"Code Pass Rate", owner:"Amr H.", goal:"95%", values:["93%","96%","94%","97%","95%","98%","92%","94%","96%","97%","95%","93%","96%"] },
+];
+
+let issues = [
+  { id:1, issue:"Abu Dhabi hiring pipeline is too thin — need recruiter support", priority:"high", type:"IDS", owner:"Ahamed T." },
+  { id:2, issue:"UAE Civil Defence approval timelines have doubled — impacting cash flow", priority:"high", type:"IDS", owner:"Ahamed T." },
+  { id:3, issue:"Accelo time-tracking compliance below 80% for some engineers", priority:"medium", type:"IDS", owner:"Danielle L." },
+  { id:4, issue:"CFD software licenses approaching capacity — need 3 more seats", priority:"medium", type:"Solve", owner:"Amr H." },
+  { id:5, issue:"Mass timber projects require updated insurance coverage", priority:"high", type:"IDS", owner:"Jack K." },
+  { id:6, issue:"No standardized onboarding process for new engineers across regions", priority:"medium", type:"IDS", owner:"Danielle L." },
+  { id:7, issue:"Australian NCC 2025 amendments require team retraining", priority:"low", type:"Solve", owner:"Benjamin H-B." },
+  { id:8, issue:"Client portal concept — should we build or buy?", priority:"low", type:"IDS", owner:"Jack K." },
+];
+
+const l10Agenda = [
+  { item:"Segue — Good news (personal & professional)", time:"5 min", icon:"☀", hl:false },
+  { item:"Scorecard review", time:"5 min", icon:"▤", hl:false },
+  { item:"Rock review", time:"5 min", icon:"◆", hl:false },
+  { item:"Customer/Employee headlines", time:"5 min", icon:"☷", hl:false },
+  { item:"To-do list review", time:"5 min", icon:"✓", hl:false },
+  { item:"IDS™ — Identify, Discuss, Solve", time:"60 min", icon:"⚡", hl:true },
+  { item:"Conclude — Recap to-dos, cascading messages, rating", time:"5 min", icon:"↻", hl:false },
+];
+
+// ═══ RENDERING ═══
+function renderDepts() {
+  document.getElementById('dept-grid').innerHTML = departments.map(d => `
+    <div class="dept-card">
+      <div class="dept-name">${d.name}</div>
+      <div class="dept-head">${d.head}</div>
+      <div class="dept-title">${d.title}</div>
+      ${d.seats.map(s => `<div class="dept-seat">• ${s}</div>`).join('')}
+    </div>
+  `).join('');
+}
+
+function badgeClass(s) { return s==='on-track'?'badge-green':s==='at-risk'?'badge-yellow':'badge-blue'; }
+function badgeLabel(s) { return s==='on-track'?'On Track':s==='at-risk'?'At Risk':'Complete'; }
+function progClass(v) { return v===100?'blue':v>=50?'green':'yellow'; }
+
+function renderRocks() {
+  const counts = {'on-track':0,'at-risk':0,'complete':0};
+  rocks.forEach(r => counts[r.status]++);
+  document.getElementById('rock-summary').innerHTML = Object.entries(counts).map(([s,c]) =>
+    `<span><span class="badge ${badgeClass(s)}">${badgeLabel(s)}</span> <span style="font-size:12px;color:var(--text-muted)">(${c})</span></span>`
+  ).join('');
+  document.getElementById('rocks-list').innerHTML = rocks.map(r => `
+    <div class="rock-row">
+      <div class="rock-owner">${r.owner}</div>
+      <div class="rock-desc">${r.rock}</div>
+      <span class="badge ${badgeClass(r.status)}">${badgeLabel(r.status)}</span>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="progress-track"><div class="progress-fill ${progClass(r.progress)}" style="width:${r.progress}%"></div></div>
+        <span class="rock-pct">${r.progress}%</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function checkGoal(val,goal) {
+  const n=parseFloat(val.replace(/[^0-9.\-]/g,'')), g=parseFloat(goal.replace(/[^0-9.\-]/g,''));
+  return goal.includes('≤') ? n<=g : n>=g;
+}
+
+function renderScorecard() {
+  const weeks = Array.from({length:13},(_,i)=>`W${i+1}`);
+  let h=`<table class="sc-table"><thead><tr><th class="sticky">Measurable</th><th>Owner</th><th class="goal">Goal</th>`;
+  weeks.forEach(w => h+=`<th class="week">${w}</th>`);
+  h+=`</tr></thead><tbody>`;
+  scorecard.forEach(r => {
+    h+=`<tr><td class="sticky">${r.metric}</td><td class="owner">${r.owner}</td><td class="goal-cell">${r.goal}</td>`;
+    r.values.forEach(v => { const ok=checkGoal(v,r.goal); h+=`<td class="val ${ok?'hit':'miss'}">${v}</td>`; });
+    h+=`</tr>`;
+  });
+  h+=`</tbody></table>`;
+  document.getElementById('scorecard-wrap').innerHTML = h;
+}
+
+let issueFilter='all';
+function renderIssues() {
+  const filtered = issueFilter==='all' ? issues : issues.filter(i=>i.priority===issueFilter);
+  document.getElementById('issue-filters').innerHTML = ['all','high','medium','low'].map(f => {
+    const cnt = f==='all'?'':`(${issues.filter(i=>i.priority===f).length})`;
+    return `<button class="filter-btn ${issueFilter===f?'active':''}" onclick="issueFilter='${f}';renderIssues()">${f} ${cnt}</button>`;
+  }).join('');
+  document.getElementById('issue-count').textContent = `${issues.length} open issues`;
+  if (!filtered.length) { document.getElementById('issues-list').innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted)">No ${issueFilter} issues remaining.</div>`; return; }
+  document.getElementById('issues-list').innerHTML = filtered.map(i => `
+    <div class="issue-row" id="issue-${i.id}">
+      <span class="priority-dot ${i.priority}"></span>
+      <div style="flex:1">
+        <div class="issue-text">${i.issue}</div>
+        <div class="issue-meta"><span class="owner">${i.owner}</span><span class="sep">|</span><span class="type-${i.type.toLowerCase()}">${i.type}</span></div>
+      </div>
+      <button class="resolve-btn" onclick="resolveIssue(${i.id})">Resolve</button>
+    </div>
+  `).join('');
+}
+
+function resolveIssue(id) {
+  const row=document.getElementById(`issue-${id}`);
+  if(row){row.style.opacity='0';row.style.transform='translateX(16px)';row.style.transition='all 0.3s ease';
+  setTimeout(()=>{issues=issues.filter(i=>i.id!==id);renderIssues();},300);}
+}
+
+function renderL10() {
+  document.getElementById('l10-agenda').innerHTML = l10Agenda.map(a => `
+    <div class="agenda-item ${a.hl?'highlight':''}">
+      <div class="agenda-icon">${a.icon}</div>
+      <span class="agenda-text">${a.item}</span>
+      <span class="agenda-time">${a.time}</span>
+    </div>
+  `).join('');
+}
+
+// ═══ TAB NAVIGATION ═══
+document.querySelectorAll('.tile[data-tab]').forEach(tile => {
+  tile.addEventListener('click', () => {
+    document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tile.classList.add('active');
+    document.getElementById(`tab-${tile.dataset.tab}`).classList.add('active');
+    window.scrollTo({ top: document.querySelector('.content-area').offsetTop - 10, behavior: 'smooth' });
+  });
+});
+
+// ═══ INIT ═══
+renderDepts(); renderRocks(); renderScorecard(); renderIssues(); renderL10();
+</script>
+
+</body>
+</html>
